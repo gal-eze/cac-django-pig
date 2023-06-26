@@ -1,0 +1,64 @@
+    {% load static %}
+	<div class="sidebar" data-color="purple" data-background-color="#f1f1f1">
+    	<div class="mb-8 text-center forny-logo">
+    		<img src="{% static 'home/assets/img/stockfolio_logo.png' %}">
+      	</div>
+      	<div class="sidebar-wrapper">
+        	<ul class="nav">
+        		{% if request.user.is_authenticated %}
+          			{% if request.user.is_staff %}
+						<li style="margin-left: 20px;">
+							<span class="sidebar-title-text">Valores Negociables</span>
+							<hr class="sidebar-divider">
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'upload-file' %}">
+								<i class="material-icons">file_upload</i>
+								<p>Importar</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'security-list' %}">
+								<i class="material-icons">list</i>
+								<p>Listar</p>
+							</a>
+							<hr class="sidebar-divider">
+						</li>
+          			{% else %}
+						<li class="nav-item {% if 'index' in segment %} active {% endif %}">
+							<a class="nav-link" href="{% url 'dashboard' %}">
+								<i class="material-icons">dashboard</i>
+								<p>Panel Portfolio</p>
+							</a>
+						</li>
+						<li class="nav-item {% if 'index' in segment %} active {% endif %}">
+							<a class="nav-link" href="{% url 'transaction-list' %}">
+								<i class="material-icons">view_list</i>
+								<p>Transacciones</p>
+							</a>
+						</li>
+						<li class="nav-item {% if 'page-user' in segment %} active {% endif %}">
+							<a class="nav-link" href="{% url 'page-user' %}">
+								<i class="material-icons">person</i>
+								<p>Perfil de Usuario</p>
+							</a>
+						</li>
+          			{% endif %}
+					<li class="nav-item ">
+						<a class="nav-link" href="{% url 'account_logout' %}" >
+						<i class="material-icons">directions_run</i>
+						<p>Cerrar sesión</p>
+						</a>
+					</li>
+				{% else %}
+					<li class="nav-item active">
+						<a class="nav-link" href="{% url 'demo' %}" >
+							<i class="material-icons">contact_mail</i>
+							<p>Demo</p>
+						</a>
+					</li>          
+				{% endif %}
+        </ul>
+      </div>
+
+    </div>

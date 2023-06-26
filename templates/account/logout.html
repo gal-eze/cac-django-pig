@@ -1,0 +1,49 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Login {% endblock %} 
+
+{% load static %}
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link href="{% static 'account/css/bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'account/css/common.css' %}" rel="stylesheet">    
+<link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&amp;display=swap" rel="stylesheet">
+<link href="{% static 'account/css/theme-03.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="forny-container">
+    <div class="forny-inner">
+      <div class="forny-form">
+        <div class="mb-8 text-center forny-logo">
+          <img src="{% static 'home/assets/img/stockfolio_logo.png' %}">
+        </div>
+        <div class="text-center">
+          <h4>Salir de la cuenta</h4>
+          <p class="mb-10">¿Estás seguro de que querés cerrar sesión?</p>
+        </div>
+        <form method="POST" action="{% url 'account_logout' %}">
+          {% csrf_token %}
+          <div>
+            <button class="primaryAction btn btn-primary btn-block" type="submit">Si, cerrar sesión</button>
+          </div>
+        </form>
+        <div class="line mt-6 mb-6 text-center">
+          <span>o</span>
+        </div>
+        <div class="text-center">
+          <p><a href="javascript:history.back()">Volver</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+  <script src="{% static 'account/js/jquery.min.js' %}"></script>
+  <script src="{% static 'account/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'account/js/main.js' %}"></script>
+  <script src="{% static 'account/js/demo.js' %}"></script> 
+{% endblock javascripts %}

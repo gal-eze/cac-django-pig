@@ -1,0 +1,237 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Panel del Portfolio {% endblock %} 
+
+{% load static %}
+<!-- Specific Page CSS goes HERE  -->
+
+{% block content %}
+
+    <!-- quotes panel -->
+    <div class="row">
+        <div class="col-12">
+            <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <div class="tradingview-widget-copyright"></div>                                       
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-tickers.js" async>
+                    {
+                        "symbols": [
+                            {
+                                "proName": "FOREXCOM:SPXUSD",
+                                "title": "S&P 500"
+                            },
+                            {
+                                "proName": "FOREXCOM:NSXUSD",
+                                "title": "Nasdaq 100"
+                            },
+                            {
+                                "proName": "FX_IDC:EURUSD",
+                                "title": "EUR/USD"
+                            },
+                            {
+                                "proName": "BITSTAMP:BTCUSD",
+                                "title": "BTC/USD"
+                            },
+                            {
+                                "proName": "BITSTAMP:ETHUSD",
+                                "title": "ETH/USD"
+                            }
+                        ],
+                        "colorTheme": "light",
+                        "isTransparent": false,
+                        "showSymbolLogo": true,
+                        "locale": "in"
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+
+    {% if holdings %}
+        <!-- Resume panel-->
+        <div class="row">
+            <div class="col-md-6 col-xl-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="float-right mt-2">
+                            <div id="total-investment-chart"></div>
+                        </div>
+                        <div>
+                            <h3 class="mb-1 mt-1 font-weight-bold">$ <span data-plugin="counterup">{{ totalInvestment | floatformat:2 }}</span></h4>
+                            <p class="text-muted mb-0">Inversión total</p>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end col-->
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="float-right mt-2">
+                            <div id="current-value-chart"></div>
+                        </div>
+                        <div>
+                            <h3 class="mb-1 mt-1 font-weight-bold" id="current-value">$ <span data-plugin="counterup">--</span></h4>
+                            <p class="text-muted mb-0">Valor Actual</p>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end col-->
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="float-right mt-2">
+                            <div id="pnl-chart"></div>
+                        </div>
+                        <div>
+                            <h3 class="mb-1 mt-1 font-weight-bold" style="color:#34c38f;" id="unrealized-pnl"><span data-plugin="counterup">--</span></h4>
+                            <p class="text-muted mb-0">Pérdidas y ganancias no realizadas</p>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end col-->
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="float-right mt-2">
+                            <div id="growth-chart"></div>
+                        </div>
+                        <div>
+                            <h3 class="mb-1 mt-1 font-weight-bold" style="color:#34c38f;" id="growth"><span data-plugin="counterup">--</span> %</h4>
+                            <p class="text-muted mb-0">Crecimiento</p>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end col-->
+        </div> <!-- end row-->
+        
+        <!-- row donut charts-->
+        <div class="row"> 
+            <div class="col-md-4 col-sm-12">
+                <div class="card">
+                    <div id="donut-chart">
+                        <canvas id="account-chart-container" style="display: block; height: 300px; padding: 20px;" class="chartjs-render-monitor"></canvas>
+                        <div class="font-weight-bold text-center mb-4" style="font-size: 16px; z-index: 1001">Cuenta</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-12">
+                <div class="card">
+                    <div id="donut-chart">
+                        <canvas id="sector-chart-container" style="display: block; height: 300px; padding: 20px;" class="chartjs-render-monitor"></canvas>
+                        <div class="font-weight-bold text-center mb-4" style="font-size: 16px; z-index: 1001">Sectores</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-12">
+                <div class="card">
+                    <div id="donut-chart">
+                        <canvas id="stock-chart-container" style="display: block; height: 300px; padding: 20px;" class="chartjs-render-monitor"></canvas>
+                        <div class="font-weight-bold text-center mb-4" style="font-size: 16px; z-index: 1001">Acciones</div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <!-- end row donut charts-->
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Tenencia</h4>
+                        <p class="card-category">Agrupada por activo</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" style="max-height: 270px; overflow-y: auto;">
+                            <table class="table" id="portfolio-table">
+                                <thead class="text-primary">
+                                    <th class="text-center font-weight-bold">Ticker</th>
+                                    <th class="text-right text-right font-weight-bold">Cantidad de acciones</th>
+                                    <th class="text-right font-weight-bold">Monto Invertido</th>
+                                    <th class="text-right font-weight-bold">Último Precio Operado</th>
+                                    <th class="text-right font-weight-bold">Precio Promedio</th>
+                                    <th class="text-right font-weight-bold">P&G</th>
+                                    <th class="text-right font-weight-bold">Cambio Neto</th>
+                                    <th class="text-center font-weight-bold">Detalles</th>
+                                </thead>
+                                <tbody>                  
+                                    {% for c in holdings %}
+                                        <tr id="{{ c.CompanySymbol }}">
+                                            <td class="text-center font-weight-bold" style="font-size: 20px;">{{ c.CompanySymbol }}</td>
+                                            <td class="text-right font-weight-bold" style="font-size: 20px;">{{ c.NumberShares }}</td>
+                                            <td class="text-right font-weight-bold" style="font-size: 20px;">$ {{ c.InvestmentAmount | floatformat:2 }}</td>
+                                            <td class="text-right font-weight-bold" style="font-size: 20px;">LTP</td>
+                                            <td class="text-right font-weight-bold" style="font-size: 20px;">$ {{ c.AverageCost | floatformat:2 }}</td>
+                                            <td class="text-right font-weight-bold" style="font-size: 20px;">PNL</td>
+                                            <td class="text-right font-weight-bold" style="font-size: 20px;">Net Change</td>
+                                            <td class="text-center">
+                                                <!-- TODO -->  
+                                                <button type="button" class="btn btn-stockfolio btn-md btn-rounded waves-effect waves-light">
+                                                    Ver Detalles
+                                                </button>
+                                            </td>
+                                        </tr>  
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div>
+    {% else %}
+        <!-- El usuario no tiene transacciones -->
+        <div class="alert alert-info bg-dark text-white">
+            <p>No has realizado ninguna transacción aún.</p>
+            <p>Registra tus transacciones <a href="{% url 'transaction-create' %}" style="color: yellow; animation: blink 1s infinite;">aquí</a>.</p>
+        </div>
+    {% endif %}
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://www.chartjs.org/dist/2.9.4/Chart.min.js"></script>
+
+    <!--the following 4 variables must be initialized before importing dashboard.js-->
+    <script>
+        var sectorsdata = {{ sectors.0 }};
+        var stocksdata = {{ stocks.0 }};
+        var sectorslabels = JSON.parse('{{ sectors.1 }}'.replace(new RegExp("&"+"#"+"x27;", "g"), '"'));
+        var stockslabels = JSON.parse('{{ stocks.1 }}'.replace(new RegExp("&"+"#"+"x27;", "g"), '"'));
+    </script>
+    <script src="{% static 'portfolio/js/dashboard.js' %}"></script> 
+    
+    <script>
+        function getFinancials(symbol) {
+            $.ajax({
+                type: "GET",
+                url: "/get-financials",
+                data: {
+                    "symbol": symbol
+                },
+                dataType: "json",
+                success: function(data) {
+                    if (data.hasOwnProperty('Error')) {
+                        // alert('Error at backend for getFinancials\n' + "Message: " + data['Error']);
+                        var active = false;
+                        var timer = setTimeout(() => { getFinancials(symbol); clearTimeout(timer); }, 1000 * 10 * 1);
+                    } else {
+                        printFinancials(symbol, data["financials"]);
+                    }
+                }
+            });
+        }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+        // Javascript method's body can be found in assets/js/demos.js
+        md.initDashboardPageCharts();
+
+        var callUpdateFunction = setInterval(getUpdatedValues, 1000 * 5);
+        });
+    </script>
+
+{% endblock javascripts %}

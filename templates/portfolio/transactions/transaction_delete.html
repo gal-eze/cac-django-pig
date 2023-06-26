@@ -1,0 +1,40 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Eliminar Transacción {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+    .label-tab {
+        min-width: 50px; /* Ajusta el ancho mínimo según tus necesidades */
+    }
+    .card {
+        width: fit-content;
+        margin: 0 auto;
+    }
+    .card-body {
+        width: fit-content;
+        margin: 0 auto;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+    <h1 class="mt-4">Transacciones</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'transaction-list' %}">Transacciones</a></li>
+        <li class="breadcrumb-item active">Eliminar Transacción</li>
+    </ol>
+
+    <div class="card">
+        <div class="card-header">Eliminación de transacción</div>
+        <div class="card-body">
+            <form action="{% url 'transaction-delete' pk=transaction.pk %}" method="post">
+                {% csrf_token %}
+                <p>¿Está seguro que quiere eliminar la transacción "{{ object }}"?</p>
+                <a href="{% url 'transaction-list' %}" class="btn btn-secondary">Cancelar</a>
+                <input type="submit" value="Confirmar" class="btn btn-danger">
+            </form>
+        </div>
+    </div>
+{% endblock content %}

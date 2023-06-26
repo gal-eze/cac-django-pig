@@ -1,0 +1,46 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Importar archivo de Activos Negociables {% endblock %} 
+
+{% block content %}
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+      <div class="card-header card-header-primary">
+          <h4 class="card-title">Importación de Contizantes</h4>
+          <p class="card-category">Vista Previa de Datos</p>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive" style="max-height: 815px; overflow-y: auto;">
+            <table class="table">
+              <thead class="text-primary">
+                {% for header in headers %}
+                  <th>{{ header }}</th>
+                {% endfor %}
+              </thead>
+              <tbody>
+                {% for security in securities %}
+                  <tr>
+                    {% for item in security %}
+                      <td>{{ item }}</td>
+                    {% endfor %}
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <form action="{% url 'save-data' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="file" value="{{ file_base64 }}">
+        <div class="row mt-3">
+          <div class="col-12">
+              <a href="/" class="btn btn-secondary">Cancelar</a>
+              <input type="submit" value="Guardar" class="btn btn-success">        
+          </div>
+        </div>
+
+      </form>
+  </div>
+{% endblock %}

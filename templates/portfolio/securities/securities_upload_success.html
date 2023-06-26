@@ -1,0 +1,9 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Importar archivo de Activos Negociables {% endblock %} 
+
+{% block content %}
+  <h2>Los datos han sido importados satisfactoriamente!</h2>
+  <p>Los datos han sido incorporados a la base de datos.</p>
+  <a href="{% url 'upload-file' %}">Importar otro archivo</a>
+{% endblock %}

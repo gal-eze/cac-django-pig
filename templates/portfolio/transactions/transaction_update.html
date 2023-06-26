@@ -1,0 +1,36 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Editar Transacción {% endblock %}
+
+{% block stylesheets %}
+<style>
+    .label-tab {
+        min-width: 50px; /* Ajusta el ancho mínimo según tus necesidades */
+    }
+    .card {
+        width: fit-content;
+        margin: 0 auto;
+    }
+    .card-body {
+        width: fit-content;
+        margin: 0 auto;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+    <h1 class="mt-3">Transacciones</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'transaction-list' %}">Transacciones</a></li>
+        <li class="breadcrumb-item active">Editar Transacción</li>
+    </ol>
+    <div class="card mx-auto">
+        <div class="card-header">Edición de transacción</div>
+        <div class="card-body d-flex justify-content-center align-items-center">
+            <form action="{% url 'transaction-update' pk=transaction.pk%}" method="post">
+                {% csrf_token %}
+                {% include 'portfolio/transactions/transaction_form.html' %}
+            </form>
+        </div>
+    </div>
+{% endblock content %}

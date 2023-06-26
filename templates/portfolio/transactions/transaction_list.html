@@ -1,0 +1,87 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Transaciones {% endblock %} 
+
+{% block content %}
+
+    {% load humanize %}
+    {% load custom_filters %}
+
+    <h3 class="mt-3">Transacciones efectuadas</h3>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Panel</a></li>
+        <li class="breadcrumb-item active">Transacciones</li>
+    </ol>
+
+    {% if transactions %}
+        <div class="card">
+            <div class="card-body">
+                <form action="{% url 'transaction-filter'%}" method="get">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="md-form mb-0">
+                                <label for="name" class="">Ticker</label>
+                                <input type="text" id="symbol" name="symbol" placeholder="Ingrese el ticker" class="form-control" value="{{ filter_value }}">
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <button class="btn btn-primary mt-4">Buscar</button>
+                            <a href="{% url 'transaction-list' %}" class="btn btn-secondary mt-4">Restaurar Filtro</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <a name="" id="" class="btn btn-success" href="{% url 'transaction-create' %}" role="button"> <i class="fa-solid fa-circle-plus"></i>Nueva</a>
+                <div class="table-responsive" style="max-height: 650px; overflow-y: auto;">
+                    <!-- bs5-table-defaul -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Ticker</th>
+                                <th>Descripción</th>
+                                <th style="text-align: right;">Precio</th>
+                                <th style="text-align: right;">Cantidad</th>
+                                <th style="text-align: right;">Monto Invertido</th>
+                                <th>Broker</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                                <tr>
+                                    <td>{{transaction.date|date:"Y-m-d h:i A"}}</td>
+                                    <td>{{transaction.security.symbol}}</td>
+                                    <td>{{transaction.security.description}}</td>
+                                    <td style="text-align: right;">{{transaction.price| floatformat:2}}</td>
+                                    <td style="text-align: right;">{{transaction.quantity}}</td>
+                                    <td style="text-align: right;">{{transaction.investment_amount| floatformat:2}}</td>
+                                    <td>{{transaction.broker}}</td>
+                                    <td>
+                                        <a href="{% url 'transaction-update' transaction.id %}" title="Editar" class="btn btn-warning"><i class="material-icons">edit</i></a>
+                                        <a href="{% url 'transaction-delete' transaction.id %}" title="Eliminar" class="btn btn-danger"><i class="material-icons">delete</i></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                Administración de transacciones
+            </div>
+
+        </div>
+    {% else %}
+        <!-- El usuario no tiene transacciones -->
+        <div class="alert alert-info bg-dark text-white">
+            <p>No has realizado ninguna transacción aún.</p>
+            <p>Registra tus transacciones <a href="{% url 'transaction-create' %}" style="color: yellow; animation: blink 1s infinite;">aquí</a>.</p>
+        </div>
+    {% endif %}
+
+{% endblock content %}

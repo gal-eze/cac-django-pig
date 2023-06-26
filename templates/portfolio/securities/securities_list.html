@@ -1,0 +1,73 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Listado de Activos Negociables {% endblock %} 
+
+{% block content %}
+    {% load humanize %}
+    {% load custom_filters %}
+
+    <h3 class="mt-3">Listado de Activos Negociables</h3>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Activos Negociables</li>
+    </ol>
+    {% if securities %}
+        <div class="card">
+            <div class="card-body">
+                <form action="{% url 'security-filter'%}" method="get">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="md-form mb-0">
+                                <label for="name" class="">Ticker</label>
+                                <input type="text" id="symbol" name="symbol" placeholder="Ingrese el ticker" class="form-control" value="{{ security_filter_value }}">
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <button class="btn btn-primary mt-4">Buscar</button>
+                            <a href="{% url 'security-list' %}" class="btn btn-secondary mt-4">Restaurar Filtro</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Listado de Activos Negociables</h4>
+                        <p class="card-category"></p>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" style="max-height: 750px; overflow-y: auto;">
+                            <table class="table">
+                                <thead class="text-primary">
+                                    <tr>
+                                        <th>Ticker</th>
+                                        <th>Descripción</th>
+                                        <th>Sector</th>
+                                        <th>Último Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for security in securities %}
+                                        <tr>
+                                            <td>{{security.symbol}}</td>
+                                            <td>{{security.description}}</td>
+                                            <td>{{security.sector}}</td>
+                                            <td>{{security.last_price| floatformat:2}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+            </div>
+     </div>
+     {% else %}
+     <!-- There are no securities in the database -->
+     <div class="alert alert-info bg-dark text-white">
+         <p>No hay Activos Negociables almacenados en la base de datos.</p>
+         <p>Importe listado de Activos Negociables <a href="{% url 'upload-file' %}" style="color: yellow;">aquí</a>.</p>
+     </div>
+ {% endif %}
+{% endblock %}
