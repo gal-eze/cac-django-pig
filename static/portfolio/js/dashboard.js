@@ -53,76 +53,6 @@
   }
 
 
-
-  function addStockHoldingResult(data) {
-      if (data === "Success") {
-          $('#myModal').modal('toggle');
-          alert("Stock Holding successfully added to your portfolio");
-          location.reload();
-      } else {
-          alert("Error adding the stock holding\n"); // + "Message: " + data);
-      }
-  }
-
-  $("#add-holding-form").submit(function(e) {
-      e.preventDefault(); // avoid to execute the actual submit of the form.
-      var form = $(this);
-      var url = form.attr('action');
-      $.ajax({
-          type: "POST",
-          url: url,
-          data: form.serialize(),
-          success: function(data) { addStockHoldingResult(data) }
-      });
-  });
-
-
-
-
-  function getPortfolioInsights() {
-      $.ajax({
-          type: "GET",
-          url: "/get-portfolio-insights",
-          dataType: "json",
-          success: function(data) {
-              if (data.hasOwnProperty('Error')) {
-                  // alert('Error at backend\n' + "Message: " + data['Error']);
-                  getPortfolioInsights();
-              } else {
-                  var betaElement = document.getElementById("portfolio-beta");
-                  var betaElementTxt = document.getElementById("portfolio-beta-text");
-                  betaElement.innerHTML = parseFloat(data["PortfolioBeta"]).toFixed(2);
-                  betaElementTxt.innerHTML = `Your portfolio moves by a factor of ${ parseFloat(data["PortfolioBeta"]).toFixed(2) } in the direction of market swing`;
-                  var peElement = document.getElementById("portfolio-pe");
-                  peElement.innerHTML = parseFloat(data["PortfolioPE"]).toFixed(2);
-              }
-          }
-      });
-  }
-
-  function openTab(evt, tabName) {
-      // Declare all variables
-      var i, tabcontent, tablinks;
-      // Get all elements with class="tabcontent" and hide them
-      tabcontent = document.getElementsByClassName("tabcontent");
-      for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
-      }
-      // Get all elements with class="tablinks" and remove the class "active"
-      tablinks = document.getElementsByClassName("nav-link");
-      for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-      }
-      // Show the current tab, and add an "active" class to the button that opened the tab
-      document.getElementById(tabName).style.display = "block";
-      evt.currentTarget.className += " active";
-
-      if (tabName === "portfolio-insights") {
-          getPortfolioInsights();
-      }
-  }
-
-
   function generateRandomColors(length) {
       var colors = [];
       for (let i = 0; i < length; i++) {
@@ -136,15 +66,11 @@
       'data': [100],
       'labels': ['equity']
   };
-
-
-  
+ 
   var sectors = {
       'data': sectorsdata,
       'labels': sectorslabels
   };
-
-
 
   var stocks = {
       'data': stocksdata,
